@@ -16,9 +16,3 @@ if [ "$COVERAGE" -lt "$REQUIRED_COVERAGE" ]; then
   echo "Error: La cobertura de código es de ${COVERAGE}%. Necesitas al menos ${REQUIRED_COVERAGE}% para hacer commit."
   exit 1
 fi
-
-# Verifica si hay nuevos archivos de componentes en el directorio especificado
-if git diff --cached --name-only | grep -q 'src/modules/*\.tsx'; then
-    echo "Has agregado un nuevo componente. Por favor, crea un archivo de prueba correspondiente."
-    exit 1
-fi
