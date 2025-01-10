@@ -18,7 +18,7 @@ if [ "$COVERAGE" -lt "$REQUIRED_COVERAGE" ]; then
 fi
 
 # Verifica si hay nuevos archivos de componentes en el directorio especificado
-if git diff --cached --name-only | grep -q 'src/modules/dashboard/pages/.*\.tsx'; then
+if git diff --cached --name-only | grep -q 'src/modules/*\.tsx'; then
     echo "Has agregado un nuevo componente. Por favor, crea un archivo de prueba correspondiente."
     exit 1
 fi
