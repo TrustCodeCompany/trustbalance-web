@@ -1,10 +1,10 @@
 import './App.css';
-import PetsPage from './modules/pets/pages/petsPage/PetsPage';
+import { DashboardPage } from './modules/dashboard/pages';
 
 function App() {
   return (
     <>
-      <PetsPage />
+      <DashboardPage />
     </>
   );
 }
