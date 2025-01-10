@@ -1,0 +1,18 @@
+
+# pnpm lint            # Ejecuta ESLint
+# pnpm test            # Ejecuta las pruebas unitarias
+
+npx lint-staged      # Ejecuta el linter y el formateador
+
+# Ejecuta jest con cobertura y guarda la salida
+COVERAGE_OUTPUT=$(pnpm cov --coverageReporters=text-summary)
+
+# Extrae el porcentaje de cobertura global de statements
+COVERAGE=$(echo "$COVERAGE_OUTPUT" | grep 'Statements' | awk '{print $3}' | tr -d '%' | cut -d'.' -f1)
+
+# Verifica que la cobertura sea mayor o igual a 80
+REQUIRED_COVERAGE=80
+if [ "$COVERAGE" -lt "$REQUIRED_COVERAGE" ]; then
+  echo "Error: La cobertura de código es de ${COVERAGE}%. Necesitas al menos ${REQUIRED_COVERAGE}% para hacer commit."
+  exit 1
+fi

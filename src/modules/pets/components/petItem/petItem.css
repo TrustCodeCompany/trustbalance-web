@@ -1,0 +1,38 @@
+.card {
+  margin: 10px;
+  padding: 10px;
+  border: 2px solid #bad7f1;
+  border-radius: 5px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
+  transition: 0.3s;
+  width: 300px;
+  height: 300px;
+  cursor: pointer;
+  background-color: #131414;
+
+  /* text-align: center; */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+}
+
+h3 {
+  font-size: 2rem;
+}
+
+.delete-btn {
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  margin-top: 10px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+}
+
+.delete-btn:hover {
+  background-color: #c0392b;
+}
