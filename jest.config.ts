@@ -9,8 +9,9 @@ export default {
   },
   collectCoverageFrom: [
     // 'src/**/*.{ts,tsx}', // Incluye todos los archivos TypeScript y TSX de `src/`
-    'src/components/**/*.{tsx}', // Solo los componentes
-    'src/modules/**/*.{tsx}', // Solo los componentes
+    'src/modules/**/components/*.{ts,tsx}', // Solo los componentes
+    'src/modules/**/pages/*.{ts,tsx}', // Solo los componentes
+    '!src/components/**/*.tsx', // Excluye los componentes
     '!src/**/*.d.ts', // Excluye archivos de declaración de TypeScript
     '!src/index.tsx', // Excluye `index.tsx` (generalmente el punto de entrada principal)
     '!src/App.tsx', // Excluye `App.tsx`
