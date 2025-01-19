@@ -1,5 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import LoginForm from '../../components/LoginForm';
+import LoginForm from '../../pages/LoginPage';
 
 describe('LoginForm Component', () => {
   it('debería renderizar el formulario correctamente', () => {
