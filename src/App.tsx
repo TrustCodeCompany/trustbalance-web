@@ -1,13 +1,9 @@
 import './App.css';
-import LoginForm from './modules/auth/pages/LoginPage';
-import { DashboardPage } from './modules/dashboard/pages';
+import { RouterProvider } from 'react-router';
+import { router } from './routes';
 
 function App() {
-  return (
-    <>
-      <LoginForm />
-    </>
-  );
+  return <RouterProvider router={router} />;
 }
 
 export default App;
