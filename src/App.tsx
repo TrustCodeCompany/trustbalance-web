@@ -1,12 +1,9 @@
 import './App.css';
-import PetsPage from './modules/pets/pages/petsPage/PetsPage';
+import { RouterProvider } from 'react-router';
+import { router } from './routes';
 
 function App() {
-  return (
-    <>
-      <PetsPage />
-    </>
-  );
+  return <RouterProvider router={router} />;
 }
 
 export default App;
