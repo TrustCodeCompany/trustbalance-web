@@ -24,6 +24,6 @@ describe('Sidebar Component', () => {
     render(<Sidebar isSidebarOpen={true} toggleSidebar={mockToggleSidebar} />);
     const image = screen.getByAltText('Imagen Empresa');
     expect(image).toBeInTheDocument();
-    expect(image).toHaveClass('rounded', 'w-full', 'h-24', 'object-cover');
+    expect(image).toHaveClass('rounded-sm', 'w-full', 'h-24', 'object-cover');
   });
 });
