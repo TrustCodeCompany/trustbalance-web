@@ -64,7 +64,7 @@ export const LoginForm: React.FC = () => {
             type="email"
             id="email"
             {...register('email')}
-            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-opacity-50"
+            className="mt-1 block w-full border-gray-300 rounded-md shadow-xs focus:ring-3 focus:ring-opacity-50"
           />
           {errors.email && <span>{errors.email.message}</span>}
         </div>
@@ -79,7 +79,7 @@ export const LoginForm: React.FC = () => {
             type="password"
             id="password"
             {...register('password')}
-            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-opacity-50"
+            className="mt-1 block w-full border-gray-300 rounded-md shadow-xs focus:ring-3 focus:ring-opacity-50"
           />
           {errors.password && (
             <p className="mt-1 text-sm text-red-600">

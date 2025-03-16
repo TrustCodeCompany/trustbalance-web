@@ -19,11 +19,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
       </div>
 
       {/* Menu Items */}
-      <nav className="flex-grow p-4 text-center">
+      <nav className="grow p-4 text-center">
         <ul className="space-y-4">
-          <li className="hover:bg-red-900 p-2 rounded">Dashboard</li>
-          <li className="hover:bg-red-900 p-2 rounded">Reports</li>
-          <li className="hover:bg-red-900 p-2 rounded">Settings</li>
+          <li className="hover:bg-red-900 p-2 rounded-sm">Dashboard</li>
+          <li className="hover:bg-red-900 p-2 rounded-sm">Reports</li>
+          <li className="hover:bg-red-900 p-2 rounded-sm">Settings</li>
         </ul>
       </nav>
 
@@ -32,7 +32,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         <img
           src="https://picsum.photos/400"
           alt="Imagen Empresa"
-          className="rounded w-full h-24 object-cover"
+          className="rounded-sm w-full h-24 object-cover"
         />
       </div>
     </div>
