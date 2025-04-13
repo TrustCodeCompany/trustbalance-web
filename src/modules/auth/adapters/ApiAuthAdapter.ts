@@ -6,6 +6,7 @@ export class ApiAuthAdapter {
       id: data.results.id || '',
       email: data.results.email || '',
       token: data.results.token || '',
+      roles: data.results.roles || [],
     };
   }
 }
