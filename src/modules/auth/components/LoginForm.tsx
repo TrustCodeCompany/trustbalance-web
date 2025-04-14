@@ -1,101 +1,118 @@
-import { LoginFormData, loginSchema } from '../schemas/loginSchema';
-import { zodResolver } from '@hookform/resolvers/zod';
+// src/components/LoginForm.tsx
 import { useForm } from 'react-hook-form';
-import { ApiAuthRepository } from '../infrastructure/ApiAuthRepository';
-import { LoginUseCase } from '../usecases/LoginUseCase';
-import { useNavigate } from 'react-router';
-import React, { useState } from 'react';
-import { toast } from 'react-toastify';
+import { FcGoogle } from 'react-icons/fc';
+import { FaFacebook } from 'react-icons/fa';
 
-// Inicializar las dependencias
-const authRepository = new ApiAuthRepository();
-const loginUseCase = new LoginUseCase(authRepository);
+type FormData = {
+  email: string;
+  password: string;
+};
 
-// Componente que maneja el formulario y la respuesta
 export const LoginForm: React.FC = () => {
-  const [loading, setLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
-  const navigate = useNavigate();
-
-  // propiedades del paquete react-hook-form
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<LoginFormData>({
-    resolver: zodResolver(loginSchema),
-  });
+  } = useForm<FormData>();
+  const loading = false;
+  const errorMessage = '';
 
-  // Función para manejar el envío del formulario
-  const onSubmit = async (data: LoginFormData) => {
-    setLoading(true);
-    setErrorMessage('');
-    try {
-      await loginUseCase.execute({
-        email: data.email,
-        password: data.password,
-      });
-      navigate('/dashboard');
-    } catch (error) {
-      console.error('Error al iniciar sesión:', error);
-      setErrorMessage(
-        'Error al iniciar sesión. Por favor, verifica tus credenciales.',
-      );
-      toast.error(
-        'Error al iniciar sesión. Por favor, verifica tus credenciales.',
-      );
-    } finally {
-      setLoading(false);
-    }
+  const onSubmit = (data: FormData) => {
+    console.log('Datos del formulario:', data);
   };
 
   return (
-    <div className="flex flex-col gap-4 w-full max-w-md mx-auto p-8 bg-white rounded-lg shadow-md">
-      {/* cuerpo del formulario */}
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
-        <div>
-          <label
-            htmlFor="email"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Email
-          </label>
-          <input
-            type="email"
-            id="email"
-            {...register('email')}
-            className="mt-1 block w-full border-gray-300 rounded-md shadow-xs focus:ring-3 focus:ring-opacity-50"
-          />
-          {errors.email && <span>{errors.email.message}</span>}
-        </div>
-        <div>
-          <label
-            htmlFor="password"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Password
-          </label>
-          <input
-            type="password"
-            id="password"
-            {...register('password')}
-            className="mt-1 block w-full border-gray-300 rounded-md shadow-xs focus:ring-3 focus:ring-opacity-50"
-          />
-          {errors.password && (
-            <p className="mt-1 text-sm text-red-600">
-              {errors.password.message}
-            </p>
-          )}
-        </div>
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+      <h2 className="text-2xl font-semibold text-gray-800">
+        Bienvenido a Trust Balance
+      </h2>
+      <p className="text-sm text-gray-500 mb-4">Tu Panel de Administrador</p>
+
+      {/* Botones sociales */}
+      <div className="flex gap-4">
         <button
-          type="submit"
-          disabled={loading}
-          className="mt-4 bg-blue-500 text-white rounded-md p-2"
+          type="button"
+          className="flex-1 border rounded-md py-2 flex items-center justify-center gap-2 hover:bg-gray-100 transition"
         >
-          {loading ? 'Cargando...' : 'Iniciar Sesión'}
+          <FcGoogle className="text-xl" />
+          Login con Google
         </button>
-        {errorMessage && <div className="error-message">{errorMessage}</div>}
-      </form>
-    </div>
+        <button
+          type="button"
+          className="flex-1 border rounded-md py-2 flex items-center justify-center gap-2 hover:bg-gray-100 transition"
+        >
+          <FaFacebook className="text-blue-600 text-xl" />
+          Login con FB
+        </button>
+      </div>
+
+      {/* Separador */}
+      <div className="flex items-center justify-center gap-2">
+        <hr className="flex-grow border-t" />
+        <span className="text-sm text-gray-400">o logueate con</span>
+        <hr className="flex-grow border-t" />
+      </div>
+
+      {/* Email */}
+      <div className="flex flex-col gap-1 max-w-md">
+        <label className="text-sm text-gray-700">Correo:</label>
+        <input
+          type="email"
+          {...register('email', { required: 'Email is required' })}
+          className="border rounded-md px-3 py-2 text-sm"
+          placeholder="Ingresa tu email..."
+        />
+        {errors.email && (
+          <p className="text-sm text-red-600">{errors.email.message}</p>
+        )}
+      </div>
+
+      {/* Password */}
+      <div className="flex flex-col gap-1 max-w-md">
+        <label className="text-sm text-gray-700">Contraseña</label>
+        <input
+          type="password"
+          {...register('password', { required: 'Password is required' })}
+          className="border rounded-md px-3 py-2 text-sm"
+          placeholder="Ingresa tu contraseña"
+        />
+        {errors.password && (
+          <p className="text-sm text-red-600">{errors.password.message}</p>
+        )}
+      </div>
+
+      {/* Remember + Forgot */}
+      <div className="flex items-center justify-between text-sm text-gray-600 max-w-md">
+        <label className="flex items-center gap-2">
+          <input type="checkbox" className="accent-blue-500" />
+          Recordar este equipo
+        </label>
+        <a href="#" className="text-blue-500 hover:underline">
+          Olvidaste tu contraseña?
+        </a>
+      </div>
+
+      {/* Submit */}
+      <button
+        type="submit"
+        className="bg-indigo-500 text-white py-2 rounded-md hover:bg-indigo-600 transition max-w-md"
+        disabled={loading}
+      >
+        {loading ? 'Cargando...' : 'Login'}
+      </button>
+
+      {/* Error general */}
+      {errorMessage && (
+        <p className="text-red-600 text-sm text-center">{errorMessage}</p>
+      )}
+
+      {/* Link a registro */}
+      <p className="text-sm text-center text-gray-600 mt-4">
+        Nuevo en TrustBalance?{' '}
+        <a href="#" className="text-blue-500 hover:underline">
+          Crear un cuenta
+        </a>
+      </p>
+    </form>
   );
 };
