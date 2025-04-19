@@ -1,7 +1,7 @@
-// src/components/LoginForm.tsx
 import { useForm } from 'react-hook-form';
-import { FcGoogle } from 'react-icons/fc';
-import { FaFacebook } from 'react-icons/fa';
+import { useState } from 'react';
+import { useNavigate } from 'react-router';
+import { toast } from 'react-toastify';
 
 type FormData = {
   email: string;
@@ -14,11 +14,57 @@ export const LoginForm: React.FC = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<FormData>();
-  const loading = false;
-  const errorMessage = '';
 
-  const onSubmit = (data: FormData) => {
-    console.log('Datos del formulario:', data);
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const onSubmit = async (data: FormData) => {
+    setLoading(true);
+    setErrorMessage('');
+
+    try {
+      const response = await fetch(
+        'https://tb-api-v1.onrender.com/auth/login',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data),
+        },
+      );
+
+      const result = await response.json();
+      console.log('data', data);
+      console.log('result', result);
+
+      if (response.ok && result.results?.token) {
+        console.log('Login exitoso:', result);
+
+        // ✅ Aquí puedes guardar el token en localStorage o Zustand
+        localStorage.setItem('token', result.results.token);
+
+        toast.success('Inicio de sesión exitoso 🎉', {
+          position: 'top-center',
+        });
+
+        // Redirigir al dashboard o página principal
+        navigate('/dashboard');
+      } else {
+        setErrorMessage(result.message);
+        toast.error('Usuario o contraseña erronea', {
+          position: 'top-center',
+        });
+      }
+    } catch (error: any) {
+      toast.error(errorMessage, {
+        position: 'top-center',
+      });
+      console.error('Error:', error.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -31,37 +77,12 @@ export const LoginForm: React.FC = () => {
       </h2>
       <p className="text-sm text-gray-500 mb-4">Tu Panel de Administrador</p>
 
-      {/* Botones sociales */}
-      {/* <div className="flex gap-4">
-        <button
-          type="button"
-          className="flex-1 border rounded-md py-2 flex items-center justify-center gap-2 hover:bg-gray-100 transition"
-        >
-          <FcGoogle className="text-xl" />
-          Login con Google
-        </button>
-        <button
-          type="button"
-          className="flex-1 border rounded-md py-2 flex items-center justify-center gap-2 hover:bg-gray-100 transition"
-        >
-          <FaFacebook className="text-blue-600 text-xl" />
-          Login con FB
-        </button>
-      </div> */}
-
-      {/* Separador */}
-      {/* <div className="flex items-center justify-center gap-2">
-        <hr className="flex-grow border-t" />
-        <span className="text-sm text-gray-400">o logueate con</span>
-        <hr className="flex-grow border-t" />
-      </div> */}
-
       {/* Email */}
       <div className="flex flex-col gap-1 max-w-md">
         <label className="text-sm text-gray-700">Correo:</label>
         <input
           type="email"
-          {...register('email', { required: 'Email is required' })}
+          {...register('email', { required: 'Email es requerido' })}
           className="border rounded-md px-3 py-2 text-sm"
           placeholder="Ingresa tu email..."
         />
@@ -75,24 +96,13 @@ export const LoginForm: React.FC = () => {
         <label className="text-sm text-gray-700">Contraseña</label>
         <input
           type="password"
-          {...register('password', { required: 'Password is required' })}
+          {...register('password', { required: 'Contraseña es requerida' })}
           className="border rounded-md px-3 py-2 text-sm"
           placeholder="Ingresa tu contraseña"
         />
         {errors.password && (
           <p className="text-sm text-red-600">{errors.password.message}</p>
         )}
-      </div>
-
-      {/* Remember + Forgot */}
-      <div className="flex items-center justify-between text-sm text-gray-600 max-w-md">
-        <label className="flex items-center gap-2">
-          <input type="checkbox" className="accent-blue-500" />
-          Recordar este equipo
-        </label>
-        <a href="#" className="text-blue-500 hover:underline">
-          Olvidaste tu contraseña?
-        </a>
       </div>
 
       {/* Submit */}
@@ -104,7 +114,7 @@ export const LoginForm: React.FC = () => {
         {loading ? 'Cargando...' : 'Login'}
       </button>
 
-      {/* Error general */}
+      {/* Error */}
       {errorMessage && (
         <p className="text-red-600 text-sm text-center">{errorMessage}</p>
       )}

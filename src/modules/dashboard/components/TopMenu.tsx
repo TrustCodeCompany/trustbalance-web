@@ -1,37 +1,40 @@
-import { AvatarMenu } from './AvatarMenu';
+import { useState } from 'react';
+import { IoMenuOutline, IoMoon, IoSunnyOutline } from 'react-icons/io5';
+import AvatarMenu from './AvatarMenu';
 
 interface TopMenuProps {
-  toggleSidebar: () => void;
+  collapsed: boolean;
+  onToggle: () => void;
 }
 
-export const TopMenu: React.FC<TopMenuProps> = ({ toggleSidebar }) => {
+const TopMenu = ({ collapsed, onToggle }: TopMenuProps) => {
+  const [darkMode, setDarkMode] = useState(false);
+
   return (
-    <div className="flex items-center justify-between bg-white p-4 shadow-lg h-[70px]">
-      <ul className="flex space-x-4">
-        <li>Primer link</li>
-        <li>Segundo link</li>
-      </ul>
-
-      {/* User Avatar */}
-      <AvatarMenu />
-
-      {/* Hamburger Button */}
-      <button className="lg:hidden p-2 text-gray-600" onClick={toggleSidebar}>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-6 w-6"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
+    <header className="h-16 flex items-center justify-between bg-white px-4">
+      <div className="flex items-center">
+        <button
+          onClick={onToggle}
+          className="p-2 rounded hover:bg-gray-200 transition-colors"
         >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M4 6h16M4 12h16m-7 6h7"
-          />
-        </svg>
-      </button>
-    </div>
+          <IoMenuOutline className="text-xl text-gray-700" />
+        </button>
+      </div>
+      <div className="flex items-center">
+        <button
+          onClick={() => setDarkMode(!darkMode)}
+          className="p-2 mx-2 rounded hover:bg-gray-200 transition-colors"
+        >
+          {darkMode ? (
+            <IoSunnyOutline className="text-xl" />
+          ) : (
+            <IoMoon className="text-xl" />
+          )}
+        </button>
+        <AvatarMenu />
+      </div>
+    </header>
   );
 };
+
+export default TopMenu;

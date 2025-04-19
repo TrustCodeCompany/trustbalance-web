@@ -35,7 +35,7 @@ export const DashboardPage: React.FC = () => {
     <div className="flex flex-col h-screen w-screen">
       <div className="flex flex-1">
         <Sidebar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
-        <div className="flex-1 bg-gray-100">
+        <div className="flex-1">
           <TopMenu toggleSidebar={toggleSidebar} />
           <div className="p-4">
             <h1 className="text-2xl font-bold">Dashboard Content</h1>

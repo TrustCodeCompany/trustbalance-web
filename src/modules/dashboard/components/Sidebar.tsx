@@ -1,40 +1,54 @@
+import { NavLink } from 'react-router';
+import {
+  IoHomeOutline,
+  IoBarChartOutline,
+  IoSettingsOutline,
+} from 'react-icons/io5';
+import logo from '/src/assets/img/logo.png';
+
 interface SidebarProps {
-  isSidebarOpen: boolean;
-  toggleSidebar: () => void;
+  collapsed: boolean;
 }
 
-export const Sidebar: React.FC<SidebarProps> = ({
-  isSidebarOpen,
-  toggleSidebar,
-}) => {
-  return (
-    <div
-      className={`fixed lg:static bg-red-700 text-red-100 w-2/3 lg:w-[250px] h-full flex flex-col justify-between transform ${
-        isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
-      } transition-transform duration-300 lg:translate-x-0`}
-    >
-      {/* Logo */}
-      <div className="p-4 text-center bg-gray-100 h-[70px]">
-        <h1 className="text-xl font-bold text-red-950">Empresa Logo</h1>
-      </div>
+const menuItems = [
+  { name: 'Home', icon: IoHomeOutline, path: '/dashboard/home' },
+  { name: 'Reports', icon: IoBarChartOutline, path: '/dashboard/reports' },
+  { name: 'Settings', icon: IoSettingsOutline, path: '/dashboard/settings' },
+];
 
-      {/* Menu Items */}
-      <nav className="grow p-4 text-center">
-        <ul className="space-y-4">
-          <li className="hover:bg-red-900 p-2 rounded-sm">Dashboard</li>
-          <li className="hover:bg-red-900 p-2 rounded-sm">Reports</li>
-          <li className="hover:bg-red-900 p-2 rounded-sm">Settings</li>
-        </ul>
-      </nav>
-
-      {/* Bottom Image */}
-      <div className="p-4">
-        <img
-          src="https://picsum.photos/400"
-          alt="Imagen Empresa"
-          className="rounded-sm w-full h-24 object-cover"
-        />
-      </div>
+const Sidebar = ({ collapsed }: SidebarProps) => (
+  <aside
+    className={`bg-white border-r flex flex-col transition-all duration-300 ease-in-out ${
+      collapsed ? 'w-20' : 'w-44'
+    }`}
+  >
+    <div className="h-16 flex items-center justify-center">
+      {collapsed ? (
+        <img className="size-10 font-bold" src={logo} />
+      ) : (
+        <div className=" font-bold flex  gap-2">
+          <img className="size-6 font-bold " src={logo} />
+          <span className="">Trust Balance</span>
+        </div>
+      )}
     </div>
-  );
-};
+    <nav className="flex-1 mt-4">
+      {menuItems.map((item) => (
+        <NavLink
+          key={item.path}
+          to={item.path}
+          className={({ isActive }: { isActive: boolean }) =>
+            `flex items-center p-2 my-1 rounded transition-colors hover:bg-gray-200 ${
+              isActive ? 'text-indigo-600 bg-gray-100' : 'text-gray-700'
+            }`
+          }
+        >
+          <item.icon className="text-2xl" />
+          {!collapsed && <span className="ml-3 text-sm">{item.name}</span>}
+        </NavLink>
+      ))}
+    </nav>
+  </aside>
+);
+
+export default Sidebar;
