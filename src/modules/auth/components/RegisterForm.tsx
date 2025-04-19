@@ -1,12 +1,12 @@
-// src/components/RegisterForm.tsx
 import { useForm } from 'react-hook-form';
-import { FcGoogle } from 'react-icons/fc';
-import { FaFacebook } from 'react-icons/fa';
+import { useNavigate } from 'react-router';
+import { useState } from 'react';
 
 type FormData = {
   name: string;
+  lastName: string;
+  ruc: string;
   email: string;
-  password: string;
 };
 
 export const RegisterForm: React.FC = () => {
@@ -15,12 +15,34 @@ export const RegisterForm: React.FC = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<FormData>();
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
-  const loading = false;
-  const errorMessage = '';
+  const onSubmit = async (data: FormData) => {
+    setLoading(true);
 
-  const onSubmit = (data: FormData) => {
-    console.log('Datos del registro:', data);
+    try {
+      const response = await fetch('https://tb-api-v1.onrender.com/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...data,
+          roleIds: ['1', '3'],
+        }),
+      });
+
+      if (!response.ok) {
+        console.log('error', response);
+        throw new Error('Error al registrar usuario');
+      }
+
+      navigate('/register-success');
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Hubo un problema al registrarse. Intenta nuevamente.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -30,83 +52,69 @@ export const RegisterForm: React.FC = () => {
       </h2>
       <p className="text-sm text-gray-500 mb-4">Tu Panel de Administrador</p>
 
-      {/* Botones sociales */}
-      {/* <div className="flex gap-4">
-        <button
-          type="button"
-          className="flex-1 border rounded-md py-2 flex items-center justify-center gap-2 hover:bg-gray-100 transition"
-        >
-          <FcGoogle className="text-base" />
-          Crea con Google
-        </button>
-        <button
-          type="button"
-          className="flex-1 border rounded-md py-2 flex items-center justify-center gap-2 hover:bg-gray-100 transition"
-        >
-          <FaFacebook className="text-blue-600" />
-          Registrate con FB
-        </button>
-      </div> */}
-      {/* Separador */}
-      {/* <div className="flex items-center justify-center gap-2">
-        <hr className="flex-grow border-t" />
-        <span className="text-sm text-gray-400">o regístrate con</span>
-        <hr className="flex-grow border-t" />
-      </div> */}
-      {/* Name */}
+      {/* Nombre */}
       <div className="flex flex-col gap-1 max-w-md">
         <label className="text-sm text-gray-700">Nombre</label>
         <input
-          type="text"
           {...register('name', { required: 'El nombre es requerido' })}
           className="border rounded-md px-3 py-2 text-sm"
-          placeholder="Tu nombre completo"
+          placeholder="Tu nombre"
         />
         {errors.name && (
           <p className="text-sm text-red-600">{errors.name.message}</p>
         )}
       </div>
+
+      {/* Apellido */}
+      <div className="flex flex-col gap-1 max-w-md">
+        <label className="text-sm text-gray-700">Apellido</label>
+        <input
+          {...register('lastName', { required: 'El apellido es requerido' })}
+          className="border rounded-md px-3 py-2 text-sm"
+          placeholder="Tu apellido"
+        />
+        {errors.lastName && (
+          <p className="text-sm text-red-600">{errors.lastName.message}</p>
+        )}
+      </div>
+
+      {/* RUC */}
+      <div className="flex flex-col gap-1 max-w-md">
+        <label className="text-sm text-gray-700">RUC</label>
+        <input
+          {...register('ruc', { required: 'El RUC es requerido' })}
+          className="border rounded-md px-3 py-2 text-sm"
+          placeholder="Tu RUC"
+        />
+        {errors.ruc && (
+          <p className="text-sm text-red-600">{errors.ruc.message}</p>
+        )}
+      </div>
+
       {/* Email */}
       <div className="flex flex-col gap-1 max-w-md">
         <label className="text-sm text-gray-700">Correo</label>
         <input
-          type="email"
           {...register('email', { required: 'El correo es requerido' })}
           className="border rounded-md px-3 py-2 text-sm"
-          placeholder="Ingresa tu email..."
+          placeholder="correo@ejemplo.com"
         />
         {errors.email && (
           <p className="text-sm text-red-600">{errors.email.message}</p>
         )}
       </div>
-      {/* Password */}
-      <div className="flex flex-col gap-1 max-w-md">
-        <label className="text-sm text-gray-700">Contraseña</label>
-        <input
-          type="password"
-          {...register('password', { required: 'La contraseña es requerida' })}
-          className="border rounded-md px-3 py-2 text-sm"
-          placeholder="Crea una contraseña segura"
-        />
-        {errors.password && (
-          <p className="text-sm text-red-600">{errors.password.message}</p>
-        )}
-      </div>
-      {/* Submit */}
+
+      {/* Botón */}
       <button
         type="submit"
-        className="bg-indigo-500 text-white py-2 rounded-md hover:bg-indigo-600 transition max-w-md"
+        className="bg-indigo-500 text-white py-2 rounded-md hover:bg-indigo-600 transition max-w-md disabled:opacity-70"
         disabled={loading}
       >
         {loading ? 'Cargando...' : 'Registrarse'}
       </button>
-      {/* Error general */}
-      {errorMessage && (
-        <p className="text-red-600 text-sm text-center">{errorMessage}</p>
-      )}
-      {/* Link a login */}
+
       <p className="text-sm text-center text-gray-600 mt-4">
-        Ya tienes cuenta?{' '}
+        ¿Ya tienes una cuenta?{' '}
         <a href="/login" className="text-blue-500 hover:underline">
           Inicia sesión
         </a>
