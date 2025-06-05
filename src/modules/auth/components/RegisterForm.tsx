@@ -20,16 +20,19 @@ export const RegisterForm: React.FC = () => {
 
   const onSubmit = async (data: FormData) => {
     setLoading(true);
+    console.log('data', data);
 
     try {
-      const response = await fetch('https://tb-api-v1.onrender.com/users', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...data,
-          roleIds: ['1', '3'],
-        }),
-      });
+      const response = await fetch(
+        'https://tb-api-v2.onrender.com/api/v1/auth/sign-up',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            ...data,
+          }),
+        },
+      );
 
       if (!response.ok) {
         console.log('error', response);
