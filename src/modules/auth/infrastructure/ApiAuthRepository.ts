@@ -1,39 +1,32 @@
-import { AuthRepository } from '../repositories/AuthRepository';
+// src/repositories/ApiAuthRepository.ts
+
 import { User, UserCredentials } from '../entities/User';
 import { ApiAuthAdapter } from '../adapters/ApiAuthAdapter';
-import { useAuthStore } from '../context/authStore'; // Importa tu store Zustand
+import { useAuthStore } from '../context/authStore';
+import api from '../../../api/axios';
+import { AuthRepository } from '../repositories/AuthRepository';
 
 export class ApiAuthRepository implements AuthRepository {
-  private apiUrl = 'https://tb-api-v1.onrender.com/auth';
-
   async login(credentials: UserCredentials): Promise<User> {
-    const response = await fetch(`${this.apiUrl}/login`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(credentials),
-    });
+    try {
+      const response = await api.post('/api/v1/auth/sign-in', credentials);
+      const user = ApiAuthAdapter.toEntity(response.data);
 
-    if (!response.ok) {
-      throw new Error('Error en la autenticación');
+      // Guardamos en Zustand
+      useAuthStore.getState().setAuthData(user.token, user.email, user.roles);
+
+      // También en localStorage
+      localStorage.setItem('auth_token_softContable', user.token);
+
+      return user;
+    } catch (error: any) {
+      const message = error.response?.data?.message || 'Error al autenticar';
+      throw new Error(message);
     }
-
-    const data = await response.json();
-    console.log(data);
-
-    // Guardamos el token y otros datos de la respuesta en el contexto Zustand
-    const { token } = data.results; // Suponiendo que el token está en la respuesta
-    // const { email, roles } = ApiAuthAdapter.toEntity(data); // Adaptamos los datos a nuestra entidad
-
-    // Actualizamos el contexto Zustand con el token y demás datos
-    useAuthStore.getState().setToken(token);
-
-    return ApiAuthAdapter.toEntity(data);
   }
 
   async logout(): Promise<void> {
-    // Limpiar los datos en el contexto Zustand al hacer logout
     useAuthStore.getState().logout();
+    localStorage.removeItem('auth_token_softContable');
   }
 }
