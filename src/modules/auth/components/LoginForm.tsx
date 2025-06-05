@@ -1,67 +1,39 @@
+// src/components/LoginForm.tsx
 import { useForm } from 'react-hook-form';
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { toast } from 'react-toastify';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { LoginUseCase } from '../usecases/LoginUseCase';
+import { loginSchema } from '../schemas/loginSchema';
+import { ApiAuthRepository } from '../infrastructure/ApiAuthRepository';
 
-type FormData = {
-  email: string;
-  password: string;
-};
+const loginUseCase = new LoginUseCase(new ApiAuthRepository());
 
 export const LoginForm: React.FC = () => {
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<FormData>();
+  } = useForm({
+    resolver: zodResolver(loginSchema),
+  });
 
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
 
-  const onSubmit = async (data: FormData) => {
+  const onSubmit = async (data: any) => {
     setLoading(true);
-    setErrorMessage('');
 
     try {
-      const response = await fetch(
-        'https://tb-api-v1.onrender.com/auth/login',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(data),
-        },
-      );
+      await loginUseCase.execute(data);
 
-      const result = await response.json();
-      console.log('data', data);
-      console.log('result', result);
-
-      if (response.ok && result.results?.token) {
-        console.log('Login exitoso:', result);
-
-        // ✅ Aquí puedes guardar el token en localStorage o Zustand
-        localStorage.setItem('token', result.results.token);
-
-        toast.success('Inicio de sesión exitoso 🎉', {
-          position: 'top-center',
-        });
-
-        // Redirigir al dashboard o página principal
-        navigate('/dashboard');
-      } else {
-        setErrorMessage(result.message);
-        toast.error('Usuario o contraseña erronea', {
-          position: 'top-center',
-        });
-      }
+      toast.success('Inicio de sesión exitoso 🎉', { position: 'top-center' });
+      navigate('/dashboard');
     } catch (error: any) {
-      toast.error(errorMessage, {
+      toast.error(error.message || 'Error al iniciar sesión', {
         position: 'top-center',
       });
-      console.error('Error:', error.message);
     } finally {
       setLoading(false);
     }
@@ -86,8 +58,8 @@ export const LoginForm: React.FC = () => {
           className="border rounded-md px-3 py-2 text-sm"
           placeholder="Ingresa tu email..."
         />
-        {errors.email && (
-          <p className="text-sm text-red-600">{errors.email.message}</p>
+        {errors.email?.message && (
+          <p className="text-sm text-red-600">{String(errors.email.message)}</p>
         )}
       </div>
 
@@ -101,7 +73,9 @@ export const LoginForm: React.FC = () => {
           placeholder="Ingresa tu contraseña"
         />
         {errors.password && (
-          <p className="text-sm text-red-600">{errors.password.message}</p>
+          <p className="text-sm text-red-600">
+            {String(errors.password.message)}
+          </p>
         )}
       </div>
 
@@ -115,9 +89,9 @@ export const LoginForm: React.FC = () => {
       </button>
 
       {/* Error */}
-      {errorMessage && (
+      {/* {errorMessage && (
         <p className="text-red-600 text-sm text-center">{errorMessage}</p>
-      )}
+      )} */}
 
       {/* Link a registro */}
       <p className="text-sm text-center text-gray-600 mt-4">
