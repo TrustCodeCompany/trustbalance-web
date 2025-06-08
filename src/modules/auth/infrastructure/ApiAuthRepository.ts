@@ -25,8 +25,30 @@ export class ApiAuthRepository implements AuthRepository {
     }
   }
 
+  // Metodo para desloguear
   async logout(): Promise<void> {
     useAuthStore.getState().logout();
     localStorage.removeItem('auth_token_softContable');
+  }
+
+  // Metodo para obtener datos del usuario actual
+  async getProfile(): Promise<any> {
+    const token = useAuthStore.getState().token;
+
+    if (!token) throw new Error('Token no disponible');
+
+    try {
+      const response = await api.get('/api/v1/auth/profile', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      return response.data.data;
+    } catch (error: any) {
+      const message =
+        error.response?.data?.message || 'Error al obtener perfil';
+      throw new Error(message);
+    }
   }
 }

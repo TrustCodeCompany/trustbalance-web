@@ -1,6 +1,8 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { IoMenuOutline, IoMoon, IoSunnyOutline } from 'react-icons/io5';
 import AvatarMenu from './AvatarMenu';
+import { useAuthStore } from '../../auth/context/authStore';
+import { ApiAuthRepository } from '../../auth/infrastructure/ApiAuthRepository';
 
 interface TopMenuProps {
   collapsed: boolean;
@@ -9,6 +11,29 @@ interface TopMenuProps {
 
 const TopMenu = ({ collapsed, onToggle }: TopMenuProps) => {
   const [darkMode, setDarkMode] = useState(false);
+
+  // Obtenemos el token, email y roles del store de autenticación
+  const { token } = useAuthStore();
+  console.log(token);
+
+  // datos del usuario
+  const [userName, setUserName] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const repository = new ApiAuthRepository();
+        const profile = await repository.getProfile();
+        setUserName(`${profile.name} ${profile.lastName}`);
+      } catch (error) {
+        console.error('Error al obtener perfil:', error);
+      }
+    };
+
+    if (token) {
+      fetchProfile();
+    }
+  }, [token]);
 
   return (
     <header className="h-16 flex items-center justify-between bg-white px-4">
@@ -21,6 +46,13 @@ const TopMenu = ({ collapsed, onToggle }: TopMenuProps) => {
         </button>
       </div>
       <div className="flex items-center">
+        <span className="text-gray-700 font-semibold mr-4">
+          Usuario:{' '}
+          <span className="text-black-600">
+            {userName ? userName : 'Cargando...'}
+          </span>
+        </span>
+
         <button
           onClick={() => setDarkMode(!darkMode)}
           className="p-2 mx-2 rounded hover:bg-gray-200 transition-colors"
@@ -31,6 +63,7 @@ const TopMenu = ({ collapsed, onToggle }: TopMenuProps) => {
             <IoMoon className="text-xl" />
           )}
         </button>
+
         <AvatarMenu />
       </div>
     </header>

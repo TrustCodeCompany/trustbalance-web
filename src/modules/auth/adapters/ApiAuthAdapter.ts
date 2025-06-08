@@ -3,7 +3,7 @@ import { User } from '../entities/User';
 
 export class ApiAuthAdapter {
   static toEntity(data: any): User {
-    const result = data.results || {};
+    const result = data.data || {};
     return {
       id: result.id || '',
       email: result.email || '',
